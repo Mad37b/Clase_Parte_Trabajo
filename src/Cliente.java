@@ -198,8 +198,9 @@ public class Cliente implements Serializable {
 	
 	// boolean 
 	private boolean existe;
-	public static void ClienteExiste() {
-		if ( !Cliente.existe(Cliente nuevoCliente,listaClientes clientes) ) {
+	public static void ClienteExiste(Cliente nuevoCliente,List<Cliente> listaClientes ) {
+		
+		if ( !Cliente.existe(nuevoCliente, listaClientes) ) {
 			
 			verMensaje(" El cliente no se ha dado de alta"); 
 			System.out.println();
@@ -213,8 +214,21 @@ public class Cliente implements Serializable {
 		
 }
 	
-	private void verMensaje(String mensaje) {
+	private static boolean existe(Cliente nuevoCliente, List<Cliente> listaClientes2) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	private static void verMensaje(String mensaje) {
 		JOptionPane.showMessageDialog(null, mensaje);
+	}
+	
+	public static String pedirCliente() {
+		String pedirClientes = JOptionPane.showInputDialog("Introduce el cliente:");
+		verMensaje("Si el cliente existe paso al siguiente campo\n"+
+		           "si no existe hago que salte panel de alta cliente");
+		     
+		return pedirClientes;
 	}
 	
 	// hacer Jframe de mi programa 
@@ -223,12 +237,14 @@ public class Cliente implements Serializable {
 
 	public static void main(String[] arg) {
 		Cliente nuevoCliente = new Cliente();
-		Cliente.ClienteExiste();
+		ClienteExiste(nuevoCliente, listaClientes);
 		FicheroCliente fichero = new FicheroCliente();
 		nuevoCliente.insertarDatos();
 		nuevoCliente.archivoCliente(listaClientes);
 		fichero.crearFichero(nuevoCliente);
 		System.out.println(nuevoCliente);
+		
+		
 
 		// Crear instancia de la clase para crear el fichero del cliente
 	}
