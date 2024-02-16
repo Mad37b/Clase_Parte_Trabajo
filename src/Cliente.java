@@ -14,9 +14,13 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
-public class Cliente implements Serializable {
+public class Cliente extends JFrame implements Serializable  {
 
 	/** JavaDoc **/
 
@@ -39,6 +43,15 @@ public class Cliente implements Serializable {
 	 */
 
 	// Atributos de la clase
+	
+	private JPanel panel ;
+	private JTextField textNombre;
+	private JTextField textNif;
+	private JTextField textCorreo;
+	private JTextField textTelefono;
+	
+	
+	private JButton buttonAlta;
 
 	// Lista Array
 	static List<Cliente> listaClientes = new ArrayList<>();
@@ -64,6 +77,11 @@ public class Cliente implements Serializable {
 //  Nunca llamar a los metodos de la clase por evitar un bucle infinito
 		// verificarCliente();
 		//insertarDatos();
+		
+		setTitle("Alta de Clientes");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(400, 500);
+		getContentPane().setLayout(null);
 	};
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -106,7 +124,8 @@ public class Cliente implements Serializable {
 			if (matcherTelefono.find()) {
 				System.out.println("Nif valido en el  index: " + matcherTelefono.start());
 			} else {
-				System.out.println("Nif no válido");
+				System.out.println("Telefono no válido");
+				return;
 			}
 			
 			listaClientes.add(cliente);
@@ -198,18 +217,18 @@ public class Cliente implements Serializable {
 	
 	// boolean 
 	private boolean existe;
-	public static void ClienteExiste(Cliente nuevoCliente,List<Cliente> listaClientes ) {
+	public static  boolean ClienteExiste(Cliente nuevoCliente,List<Cliente> listaClientes ) {
 		
 		if ( !Cliente.existe(nuevoCliente, listaClientes) ) {
 			
 			verMensaje(" El cliente no se ha dado de alta"); 
-			System.out.println();
+			return false;
 	}else {
 		
 		// por JoptionPanel
 		verMensaje("El cliente se ha dado de alta");
 		// por consola
-		System.out.println();
+		return true;
 	}
 		
 }
