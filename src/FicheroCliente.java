@@ -7,6 +7,8 @@ import java.io.ObjectOutputStream;
 
 public class FicheroCliente {
 	
+	// crear lista de clientes static list clientes para añadir al fichero
+	
 	
 	public Cliente leerFichero() {
 		Cliente cliente = null;
@@ -27,7 +29,7 @@ public class FicheroCliente {
 		} catch (IOException e) {
 		}
 		
-		
+		// poner lista de clientes en principio 
 		return cliente;
 	}	
 

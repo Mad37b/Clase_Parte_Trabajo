@@ -28,6 +28,9 @@ import java.awt.Window.Type;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * 
+ */
 public class Cliente extends JFrame implements Serializable {
 
 	/** JavaDoc **/
@@ -67,23 +70,21 @@ public class Cliente extends JFrame implements Serializable {
 
 	// String
 
-	private String nombre;
-	private String nif;
-	private String correo;
-	private String telefono;
-
-	private static Scanner teclado = new Scanner(System.in);
+	private static String nombre;
+	private static String nif;
+	private static String correo;
+	private static String telefono;
 
 	// Pattern
 
-	private Pattern nifPattern = Pattern.compile("^\\d{8}\\w[TRWAGMYFPDXBNJZSQVHLCKE]$");
+	private Pattern nifPattern = Pattern.compile("^\\d{8}[TRWAGMYFPDXBNJZSQVHLCKE]$"); // pattern valido , nunca ponerle \\w cuando haya letras en corchetes
 	private Pattern telefonoPattern = Pattern.compile("^\\d{3}\\s\\d{3}\\s\\d{3}$");
 
 	// fichero
 	// private String ficheroCliente;
 
-	public Cliente() {
-//  Nunca llamar a los metodos de la clase por evitar un bucle infinito
+	public Cliente(String nombre, String nif, String correo, String telefono) {
+		// Nunca llamar a los metodos de la clase por evitar un bucle infinito
 		// verificarCliente();
 		// insertarDatos();
 
@@ -124,21 +125,25 @@ public class Cliente extends JFrame implements Serializable {
 		// Texto Nombre , Nif , Correo , Telefono
 
 		textNombre = new JTextField();
+		textNombre.setEditable(false);
 		textNombre.setBounds(204, 39, 120, 20);
 		getContentPane().add(textNombre);
 		textNombre.setColumns(10);
 
 		textNif = new JTextField();
+		textNif.setEditable(false);
 		textNif.setColumns(10);
 		textNif.setBounds(204, 77, 120, 20);
 		getContentPane().add(textNif);
 
 		textCorreo = new JTextField();
+		textCorreo.setEditable(false);
 		textCorreo.setColumns(10);
 		textCorreo.setBounds(204, 128, 120, 20);
 		getContentPane().add(textCorreo);
 
 		textTelefono = new JTextField();
+		textTelefono.setEditable(false);
 		textTelefono.setColumns(10);
 		textTelefono.setBounds(204, 176, 120, 20);
 		getContentPane().add(textTelefono);
@@ -148,15 +153,37 @@ public class Cliente extends JFrame implements Serializable {
 		JButton botonGenerarFichero = new JButton("Generar Fichero");
 		botonGenerarFichero.addMouseListener(new MouseAdapter() {
 			@Override
+			/**
+			 * @Descripcion : Creamos un fichero y un nuevo cliente cuando pulsamos el boton
+			 *              " Generar Fichero"
+			 **/
+
 			public void mouseClicked(MouseEvent e) {
 
-				Cliente nuevoCliente = new Cliente();
-				ClienteExiste(nuevoCliente, listaClientes);
-				FicheroCliente fichero = new FicheroCliente();
-				nuevoCliente.insertarDatos();
-				nuevoCliente.archivoCliente(listaClientes);
-				fichero.crearFichero(nuevoCliente);
-				System.out.println(nuevoCliente);
+				try {
+					verMensaje("se está intentando crear el fichero ");
+					FicheroCliente fichero = new FicheroCliente();
+					Cliente nuevoCliente = new Cliente(nombre, nif, correo, telefono);
+
+					nuevoCliente.insertarDatos();
+					// nuevoCliente.archivoCliente(listaClientes);
+
+					// validar datos
+
+					if (ClienteExiste(listaClientes)) {
+						String verificarCliente = nombre + "--" + nif + "--" + correo + "--" + telefono + "--";
+
+						verMensaje(" el cliente existe , sea creado en fichero");
+						verMensaje(verificarCliente);
+						fichero.crearFichero(nuevoCliente);
+
+					} else {
+						verMensaje(" No se ha podido introducir Cliente");
+					}
+				} catch (Exception f) {
+					verMensaje("ERROR 1 : el fichero no se esta creando ");
+					// TODO: handle exception
+				}
 
 			}
 		});
@@ -169,122 +196,126 @@ public class Cliente extends JFrame implements Serializable {
 
 	public void insertarDatos() {
 		boolean salir = false;
-		System.out.println("Introduce los datos del cliente : Nombre, Nif, Correo, Telefono");
-		Cliente cliente = new Cliente();
+
 		while (!salir) {
 
-			System.out.println("Nombre : ");
+			setVisible(true);
 
-			nombre = teclado.next();
-			listaClientes.add(cliente);
+			// introducir Nombre
 
-			System.out.println(" Nif : ");
-			nif = teclado.next();
-			listaClientes.add(cliente);
+			String nombre = JOptionPane.showInputDialog(null, "Introduce un Nombre:");
+			textNombre.setText(nombre);
+
+			// introducit Nif
+
+			String nif = JOptionPane.showInputDialog(null, " Introduce un Nif");
+			textNif.setText(nif);
 
 			Matcher matcherNif = nifPattern.matcher(nif);
 
 			// Verificar Nif
 
 			if (matcherNif.find()) {
-				System.out.println("Pattern found at index: " + matcherNif.start());
+				System.out.println("Pattern Nif found at index: " + matcherNif.start());
+				System.out.println(" el Nif  valido es " + matcherNif.group());
 			} else {
-				System.out.println("Pattern not found");
+				System.out.println("Pattern Nif not found");
+				System.out.println(" el Nif no valido es " + matcherNif.group());
 			}
 
-			System.out.println(" Correo : ");
-			correo = teclado.next();
-			listaClientes.add(cliente);
+			// introducit Correo
 
-			System.out.println(" Telefono : ");
-			telefono = teclado.next();
+			String correo = JOptionPane.showInputDialog(null, " Introduce un Correo");
+			textCorreo.setText(correo); // muestra el correo en el campo de texto
+			// añadir el correo a la lista de clientes
+
+			// insertar datos del telefono
+
+			String telefono = JOptionPane.showInputDialog(null, " Introduce un telefono");
+			textTelefono.setText(telefono);
 
 			Matcher matcherTelefono = telefonoPattern.matcher(telefono);
 
+			// por JOptionPanel
 			if (matcherTelefono.find()) {
-				System.out.println("Nif valido en el  index: " + matcherTelefono.start());
+				verMensaje("telefono valido en el  index: " + matcherTelefono.start());
 			} else {
-				System.out.println("Telefono no válido");
+				verMensaje("Telefono no válido");
 				return;
 			}
 
-			listaClientes.add(cliente);
+			Cliente nuevoCliente = new Cliente(cliente.getnombre, nif, correo, telefono);
+//listaClientes.add(nombre);
+			listaClientes.add(nuevoCliente);
 
-			// metodo para seguir o no introduciendo datos
+			System.out.println(" test 1º metodo" + nuevoCliente);
 
-			System.out.println(" - ¿ Quieres dejar de introducit Datos del cliente ? (s - n) ");
+			// Metodo para seguir o no introduciendo datos
 
-			String continuar = teclado.next();
+			int continuar = JOptionPane.showConfirmDialog(null, "¿Quieres Salir?", "Si / No",
+					JOptionPane.YES_NO_OPTION);
 
-			if (!continuar.equalsIgnoreCase("s")) {
+			if (continuar == JOptionPane.YES_OPTION) {
 				salir = true;
+			} else {
+				salir = false;
 			}
 
 		}
+
 	}
 
 	public List<Cliente> archivoCliente(List<Cliente> listaClientes) {
-		List<String> propiedadesClientes = new ArrayList<>();
-		for (Cliente cliente : listaClientes) {
+		List<Cliente> propiedadesClientes = new ArrayList<>();
 
+		for (Cliente cliente : listaClientes) {
+			// Cliente nuevoCliente = new Cliente(cliente.getNombre(), cliente.getNif(),
+			// cliente.getCorreo(),cliente.getTelefono());
 			propiedadesClientes.add(cliente.getNombre());
 			propiedadesClientes.add(cliente.getNif());
 			propiedadesClientes.add(cliente.getCorreo());
 			propiedadesClientes.add(cliente.getTelefono());
 
+			System.out.println(cliente);
 		}
+
 		return listaClientes;
 	}
 
-	/** Metodo 2 : Insertar Datos por teclado **/
-
-	/**
-	 * public void verificarCliente() {
-	 * 
-	 * // Verificar Datos del cliente
-	 * 
-	 * if ( ver si cliente existe) { System.out.println("el cliente verificado
-	 * existe"); }else ( noexist ){
-	 * 
-	 * System.out.println(" el cliente no existe , introduce un nuevo cliente ");
-	 * break; } }
-	 **/
-
-	// devolver la lista del cliente
-
-	// Metodo 3 : Grabar fichero
-
 	// Getters & Setters
 	public String getNombre() {
+		return textNombre.getText();
+	}
+
+	public String setNombre(String nombre) {
+		this.textNombre.setText(nombre);
 		return nombre;
 	}
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
 	public String getNif() {
-		return nif;
+
+		return textNif.getText();
+
 	}
 
 	public void setNif(String nif) {
-		this.nif = nif;
+		this.textNif.setText(nif);
 	}
 
 	public String getCorreo() {
-		return correo;
+		return textCorreo.getText();
 	}
 
 	public void setCorreo(String correo) {
-		this.correo = correo;
+		this.textCorreo.setText(correo);
 	}
 
 	public String getTelefono() {
-		return telefono;
+		return textTelefono.getText();
 	}
 
 	public void setTelefono(String telefono) {
-		this.telefono = telefono;
+		this.textTelefono.setText(telefono);
 	}
 
 	@Override
@@ -293,14 +324,12 @@ public class Cliente extends JFrame implements Serializable {
 				+ ", telefono='" + telefono + '\'' + '}';
 	}
 
-	// validar Cliente
+	// comprobar cliente existe por el nif por clientes.dat
 
-	// boolean
-	// private boolean existe;
-
-	public static boolean ClienteExiste(Cliente nuevoCliente, List<Cliente> listaClientes) {
-
-		if (!Cliente.existe(nuevoCliente, listaClientes)) {
+	public static boolean ClienteExiste(List<Cliente> listaClientes) {
+		// validar si su nif existe
+		// validar si los datos existen en la lista
+		if (!Cliente.existe(nif, listaClientes)) {
 
 			verMensaje(" El cliente no se ha dado de alta");
 			return false;
@@ -314,10 +343,16 @@ public class Cliente extends JFrame implements Serializable {
 
 	}
 
-	private static boolean existe(Cliente nuevoCliente, List<Cliente> listaClientes) {
+	private static boolean existe(String Nif, List<Cliente> listaClientes) {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/** Metodos de JOptionPanel **/
 
 	private static void verMensaje(String mensaje) {
 		JOptionPane.showMessageDialog(null, mensaje);
@@ -336,11 +371,12 @@ public class Cliente extends JFrame implements Serializable {
 	//
 
 	public static void main(String[] arg) {
+		verMensaje("Introduce los datos del cliente : Nombre, Nif, Correo, Telefono");
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Cliente frame = new Cliente();
+					Cliente frame = new Cliente(nombre, nif, correo, telefono);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -348,15 +384,5 @@ public class Cliente extends JFrame implements Serializable {
 			}
 		});
 
-		// Pasarlo a Mouseclick action
-
-		/**
-		 * Cliente nuevoCliente = new Cliente(); ClienteExiste(nuevoCliente,
-		 * listaClientes); FicheroCliente fichero = new FicheroCliente();
-		 * nuevoCliente.insertarDatos(); nuevoCliente.archivoCliente(listaClientes);
-		 * fichero.crearFichero(nuevoCliente); System.out.println(nuevoCliente);
-		 **/
-
-		// Crear instancia de la clase para crear el fichero del cliente
 	}
 }
