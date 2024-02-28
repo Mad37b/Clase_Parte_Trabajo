@@ -70,10 +70,10 @@ public class Cliente extends JFrame implements Serializable {
 
 	// String
 
-	private static String nombre;
-	private static String nif;
+	private  String nombre;
+	private static  String nif;
 	private static String correo;
-	private static String telefono;
+	private String telefono;
 
 	// Pattern
 
@@ -83,7 +83,7 @@ public class Cliente extends JFrame implements Serializable {
 	// fichero
 	// private String ficheroCliente;
 
-	public Cliente(String nombre, String nif, String correo, String telefono) {
+	public Cliente() {
 		// Nunca llamar a los metodos de la clase por evitar un bucle infinito
 		// verificarCliente();
 		// insertarDatos();
@@ -163,9 +163,10 @@ public class Cliente extends JFrame implements Serializable {
 				try {
 					verMensaje("se está intentando crear el fichero ");
 					FicheroCliente fichero = new FicheroCliente();
-					Cliente nuevoCliente = new Cliente(nombre, nif, correo, telefono);
+					Cliente nuevoCliente = new Cliente();
 
 					nuevoCliente.insertarDatos();
+					nuevoCliente.archivoCliente(listaClientes);
 					// nuevoCliente.archivoCliente(listaClientes);
 
 					// validar datos
@@ -174,14 +175,19 @@ public class Cliente extends JFrame implements Serializable {
 						String verificarCliente = nombre + "--" + nif + "--" + correo + "--" + telefono + "--";
 
 						verMensaje(" el cliente existe , sea creado en fichero");
-						verMensaje(verificarCliente);
+						verMensaje("Datos del cliente = "+verificarCliente);
+						System.out.println("test si cliente existe en el boton   "+nuevoCliente);
+						listaClientes.add(nuevoCliente);
 						fichero.crearFichero(nuevoCliente);
+						
+					
 
 					} else {
 						verMensaje(" No se ha podido introducir Cliente");
 					}
 				} catch (Exception f) {
 					verMensaje("ERROR 1 : el fichero no se esta creando ");
+					f.printStackTrace();
 					// TODO: handle exception
 				}
 
@@ -203,12 +209,12 @@ public class Cliente extends JFrame implements Serializable {
 
 			// introducir Nombre
 
-			String nombre = JOptionPane.showInputDialog(null, "Introduce un Nombre:");
+			nombre = JOptionPane.showInputDialog(null, "Introduce un Nombre:");
 			textNombre.setText(nombre);
 
 			// introducit Nif
 
-			String nif = JOptionPane.showInputDialog(null, " Introduce un Nif");
+			nif = JOptionPane.showInputDialog(null, " Introduce un Nif");
 			textNif.setText(nif);
 
 			Matcher matcherNif = nifPattern.matcher(nif);
@@ -225,13 +231,13 @@ public class Cliente extends JFrame implements Serializable {
 
 			// introducit Correo
 
-			String correo = JOptionPane.showInputDialog(null, " Introduce un Correo");
+			 correo = JOptionPane.showInputDialog(null, " Introduce un Correo");
 			textCorreo.setText(correo); // muestra el correo en el campo de texto
 			// añadir el correo a la lista de clientes
 
 			// insertar datos del telefono
 
-			String telefono = JOptionPane.showInputDialog(null, " Introduce un telefono");
+			telefono = JOptionPane.showInputDialog(null, " Introduce un telefono");
 			textTelefono.setText(telefono);
 
 			Matcher matcherTelefono = telefonoPattern.matcher(telefono);
@@ -243,12 +249,10 @@ public class Cliente extends JFrame implements Serializable {
 				verMensaje("Telefono no válido");
 				return;
 			}
+			// Añadir los datos 
+			
 
-			Cliente nuevoCliente = new Cliente(cliente.getnombre, nif, correo, telefono);
-//listaClientes.add(nombre);
-			listaClientes.add(nuevoCliente);
-
-			System.out.println(" test 1º metodo" + nuevoCliente);
+		
 
 			// Metodo para seguir o no introduciendo datos
 
@@ -266,20 +270,27 @@ public class Cliente extends JFrame implements Serializable {
 	}
 
 	public List<Cliente> archivoCliente(List<Cliente> listaClientes) {
-		List<Cliente> propiedadesClientes = new ArrayList<>();
-
+		List<Cliente> nuevoClienteList = new ArrayList<>();
+			
+		
 		for (Cliente cliente : listaClientes) {
-			// Cliente nuevoCliente = new Cliente(cliente.getNombre(), cliente.getNif(),
-			// cliente.getCorreo(),cliente.getTelefono());
-			propiedadesClientes.add(cliente.getNombre());
-			propiedadesClientes.add(cliente.getNif());
-			propiedadesClientes.add(cliente.getCorreo());
-			propiedadesClientes.add(cliente.getTelefono());
-
-			System.out.println(cliente);
-		}
-
-		return listaClientes;
+			Cliente nuevoClientes=new Cliente();
+			
+			
+			nuevoClientes.setNombre(cliente.getNombre());
+			nuevoClientes.setNif(cliente.getNif());
+			nuevoClientes.setCorreo(cliente.getCorreo());
+			nuevoClientes.setTelefono(cliente.getTelefono());
+		
+		
+		
+        nuevoClienteList.add(nuevoClientes);
+        System.out.println("test 2 : " );
+        System.out.println(nuevoClientes);
+		
+		
+		}return listaClientes;
+		
 	}
 
 	// Getters & Setters
@@ -299,7 +310,7 @@ public class Cliente extends JFrame implements Serializable {
 	}
 
 	public void setNif(String nif) {
-		this.textNif.setText(nif);
+		this.nif=nif;
 	}
 
 	public String getCorreo() {
@@ -307,7 +318,7 @@ public class Cliente extends JFrame implements Serializable {
 	}
 
 	public void setCorreo(String correo) {
-		this.textCorreo.setText(correo);
+		this.correo=correo;
 	}
 
 	public String getTelefono() {
@@ -315,7 +326,8 @@ public class Cliente extends JFrame implements Serializable {
 	}
 
 	public void setTelefono(String telefono) {
-		this.textTelefono.setText(telefono);
+		
+		 this.telefono = telefono;
 	}
 
 	@Override
@@ -331,20 +343,29 @@ public class Cliente extends JFrame implements Serializable {
 		// validar si los datos existen en la lista
 		if (!Cliente.existe(nif, listaClientes)) {
 
-			verMensaje(" El cliente no se ha dado de alta");
-			return false;
+			verMensaje(" El cliente Si se ha dado de alta");
+			return true;
 		} else {
 
 			// por JoptionPanel
-			verMensaje("El cliente se ha dado de alta");
+			verMensaje("El cliente No se ha dado de alta");
 			// por consola
-			return true;
+			return false;
 		}
 
 	}
 
-	private static boolean existe(String Nif, List<Cliente> listaClientes) {
+	private static boolean existe(String nif, List<Cliente> listaClientes) {
 		// TODO Auto-generated method stub
+		// Verifica por cada linea 
+		
+		for ( Cliente cliente : listaClientes) {
+			if (cliente.getNif().equals(nif)) {
+				System.out.println("El nif del cliente existe");
+				return true;
+			}
+		}
+		
 		return false;
 	}
 
@@ -376,7 +397,7 @@ public class Cliente extends JFrame implements Serializable {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Cliente frame = new Cliente(nombre, nif, correo, telefono);
+					Cliente frame = new Cliente();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
