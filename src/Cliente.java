@@ -178,7 +178,7 @@ public class Cliente extends JFrame implements Serializable {
 						verMensaje("Datos del cliente = "+verificarCliente);
 						System.out.println("test si cliente existe en el boton   "+nuevoCliente);
 						listaClientes.add(nuevoCliente);
-						fichero.crearFichero(nuevoCliente);
+						fichero.crearFichero(listaClientes);
 						
 					
 

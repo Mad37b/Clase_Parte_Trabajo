@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
 
 public class FicheroCliente {
 	
@@ -35,14 +36,14 @@ public class FicheroCliente {
 
 	/** Metodo 1 : Crear fichero **/
 
-	public void crearFichero(Cliente cliente) {
+	public void crearFichero(List<Cliente> listaClientes) {
 		
 		
 		// Escribir fichero por objeto
 
 		try (ObjectOutputStream miFichero = new ObjectOutputStream(new FileOutputStream("Clientes.dat"))) {
 
-			miFichero.writeObject(cliente);
+			miFichero.writeObject(listaClientes);
 			
 		
 
